@@ -1,10 +1,3 @@
-# try:
-#     import pandas as pd
-#     print("module pandas is installed")
-# except ModuleNotFoundError:
-#     print("module 'pandas' is not installed")
-#     install("pandas")
-
 import pandas as pd
 from bs4 import BeautifulSoup
 from urllib.request import Request, urlopen
@@ -65,8 +58,19 @@ class SearchHttp:
                 print(book)
         print("Quantity: ",len(self.arrayBooks))
 
+    def seachSpanFromTag(self, 
+                        soupHtml, 
+                        name ='span', 
+                        class_ ='class',
+                        tag = ''
+                        ):
+        spans = soupHtml.find_all(name, {class_ : tag})
+        lines = [span.get_text() for span in spans]
+        
+        return lines
+
     def ExtractDate(self):
-        for urlBook in self.arrayBooks:
+        for urlBook in self.arrayBooks[:5]:
             print("Link",urlBook)
             
             html = self.returnHtmlUrl(urlBook)
@@ -75,24 +79,19 @@ class SearchHttp:
             soup=BeautifulSoup(html,"html.parser")
             
             # find a list of all span elements
-            spansTitle = soup.find_all('span', {'class' : 'a-size-extra-large'})
-            spansPrice = soup.find_all('span', {'class' : 'a-size-base a-color-price'})
-            spansRate  = soup.find_all('span', {'data-hook' : 'rating-out-of-text'})
-            spansNvote = soup.find_all('span', {'class' : 'a-size-base a-color-secondary'})
-
             # create a list of lines corresponding to element texts
-            linesTitle = [span.get_text() for span in spansTitle]
-            linesPrice = [span.get_text() for span in spansPrice]
-            linesRate  = [span.get_text() for span in spansRate]
-            linesNvote = [span.get_text() for span in spansNvote]
+            linesTitle = self.seachSpanFromTag(soup, name='span', class_='class', tag='a-size-extra-large')
+            linesPrice = self.seachSpanFromTag(soup, name='span', class_='class', tag='a-size-base a-color-price')
+            linesRate  = self.seachSpanFromTag(soup, name='span', class_='data-hook', tag='rating-out-of-text')
+            linesNvote = self.seachSpanFromTag(soup, name='span', class_='class', tag='a-size-base a-color-secondary')
 
-            self.df = self.df.append({'Name'  : linesTitle[0],
-                                      'price' : linesPrice, 
-                                      'rate'  : linesRate, 
-                                      'n_vote': linesNvote,
-                                      'link'  : urlBook
-                                     },
-                                     ignore_index = True)
+            self.df = self.df.append({  'Name'  : linesTitle[0],
+                                        'price' : linesPrice, 
+                                        'rate'  : linesRate, 
+                                        'n_vote': linesNvote,
+                                        'link'  : urlBook
+                                    },
+                                    ignore_index = True)
 
     def showDataFrame(self):
         print(self.df)
