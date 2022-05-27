@@ -1,15 +1,20 @@
 
-# Seacher & <s>Destroy</s> Extration from Amazon
+# Seacher & <s>Destroy</s> Crowler from Amazon
 =========
 
-this is a script to scrapping http://bettersystemtrader.com/trading-books/ and extract information about books from Amazon,
+This is a script in Python for find link of books in better system trader and get some information about its in amazon, after the crawler whe export to csv for futere analize.
+http://bettersystemtrader.com/trading-books/
 
-The information are extracted from Amazon is.
+
+The information are extracted from Amazon are.
 
 1. Name of book
 1. Prices
 1. Rate(stars)
 1. Nº of vote
+1. Author
+1. Description
+1. Frequently bought together
 1. Link
 
 ## Requiriment

@@ -31,12 +31,18 @@ class SearchHttp:
             price       = self.extract.priceExtract(soup)
             rate        = self.extract.rateExtract(soup)
             nvote       = self.extract.voteExtract(soup)
+            description = self.extract.descriptionExtract(soup)
+            author      = self.extract.authorExtract(soup)
+            freqBought  = self.extract.FrequentlyBoughtExtract(soup)
 
-            newline = { 'Name'  : stringTitle,
-                        'price' : price, 
-                        'rate'  : rate, 
-                        'n_vote': nvote,
-                        'link'  : urlBook
+            newline = { 'Name'       : stringTitle,
+                        'price'      : price, 
+                        'rate'       : rate, 
+                        'n_vote'     : nvote,
+                        'author'     : author,
+                        'description': description,
+                        'freqBought' : freqBought,
+                        'link'       : urlBook
                         }
             
             # print(pd.Series(newline, index=df.columns))                       
