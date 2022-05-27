@@ -31,13 +31,13 @@ class ExtractDate(object):
             return True
         except ValueError:
             return False
- 
+
     def priceTransformation(self, price):
         if(len(price)<1): return price
         priceArray = [ x.replace("$","") for x in price]
         priceArray = [ float(x) for x in priceArray if self.is_float(x)]
         return priceArray
-   
+
     def rateTransformation(self, rate, percent=False):
         if (len(rate)<1): return rate
         transf1 = rate[0].replace("[","")
@@ -52,6 +52,18 @@ class ExtractDate(object):
         nvoteString = nvoteSplit[-3].replace(",","")
         nvote = int(nvoteString)
         return nvote
+
+    def descriptionTransformation(self, line):
+        description = line 
+        return description 
+
+    def authorTransformation(self, line):
+        auhtors = line
+        return auhtors
+
+    def FrequentlyBoughtTransformation(self, line):
+        frequentlyBought = line
+        return frequentlyBought
 
     def seachSpanFromTag(self, 
                         soupHtml, 
@@ -82,4 +94,19 @@ class ExtractDate(object):
     def voteExtract(self, soup):        
         lines = self.seachSpanFromTag(soup, name='span', class_='class',     tag='a-size-base a-color-secondary')
         line  = self.voteTransformation(lines)
+        return line
+
+    def descriptionExtract(self, soup):        
+        lines = self.seachSpanFromTag(soup, name='div', class_='class',     tag='a-section a-spacing-none a-text-center rpi-attribute-value')
+        line  = self.descriptionTransformation(lines)
+        return line
+
+    def authorExtract(self, soup):
+        lines = self.seachSpanFromTag(soup, name='a', class_='class',     tag='a-size-large a-link-normal')
+        line  = self.authorTransformation(lines)
+        return line
+
+    def FrequentlyBoughtExtract(self, soup):
+        lines = self.seachSpanFromTag(soup, name='span', class_='class',     tag='_p13n-desktop-sims-fbt_fbt-desktop_title-truncate__1pPAM')
+        line  = self.FrequentlyBoughtTransformation(lines)
         return line
