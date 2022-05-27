@@ -19,10 +19,17 @@ class ConnectionUrl(object):
 
     def returnHtmlUrl(self, url, timeDelay=1):
         time.sleep(timeDelay)
+        req = 0
         try:
             req = Request(url, headers={'User-Agent': 'Mozilla/5.0'})
-            webpage = urlopen(req,timeout=10).read()
         except HTTPError as error:
             print("Error '%d' to download html form site",error)
             return ""
+
+        try:
+            webpage = urlopen(req, timeout=10).read()
+        except HTTPError as error:
+            print("Error '%d' to download html form site",error)
+            return ""
+
         return webpage.decode("utf-8")

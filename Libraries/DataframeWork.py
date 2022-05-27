@@ -2,6 +2,9 @@ import pandas as pd
 
 class DataframeWork:
 
+    def readDataFrame(self, path):
+        return pd.read_csv(path)
+
     def showBook(self, arrayBooks, show=False):
         if show:
             for book in arrayBooks:

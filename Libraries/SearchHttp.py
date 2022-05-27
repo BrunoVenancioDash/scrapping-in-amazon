@@ -12,50 +12,59 @@ class SearchHttp:
 
     connect=""
     extract=""
+    dfwork=""
 
     def ExtractDateBooks(self, arrayBooks):
         
         df = pd.DataFrame(columns = ['Name', 'price', 'rate', 'n_vote', 'link'])
-
+        
         for urlBook in arrayBooks:
             print("Link: ",urlBook)
             
             html = self.connect.returnHtmlUrl(urlBook)
             if (len(html)<1): continue
-            soup=BeautifulSoup(html,"html.parser")
+            soup=BeautifulSoup(html, "html.parser")
             
             # find a list of all span elements
             # create a list of lines corresponding to element texts
-            linesTitle = self.extract.seachSpanFromTag(soup, name='span', class_='class',     tag='a-size-extra-large')
-            linesPrice = self.extract.seachSpanFromTag(soup, name='span', class_='class',     tag='a-size-base a-color-price')
-            linesRate  = self.extract.seachSpanFromTag(soup, name='span', class_='data-hook', tag='rating-out-of-text')
-            linesNvote = self.extract.seachSpanFromTag(soup, name='span', class_='class',     tag='a-size-base a-color-secondary')
-            
-            stringTitle = linesTitle[0] if (len(linesTitle)>0) else linesTitle
+            stringTitle = self.extract.titleExtract(soup)
+            price       = self.extract.priceExtract(soup)
+            rate        = self.extract.rateExtract(soup)
+            nvote       = self.extract.voteExtract(soup)
 
-            df = df.append({'Name'  : stringTitle,
-                            'price' : linesPrice, 
-                            'rate'  : linesRate, 
-                            'n_vote': linesNvote,
-                            'link'  : urlBook
-                        },
-                        ignore_index = True)
-        print(df)                                    
+            newline = { 'Name'  : stringTitle,
+                        'price' : price, 
+                        'rate'  : rate, 
+                        'n_vote': nvote,
+                        'link'  : urlBook
+                        }
+            
+            # print(pd.Series(newline, index=df.columns))                       
+            print("\n")
+            df = df.append(newline, ignore_index = True)
+
         return df
 
-    def __init__(self, url):
-        self.connect = connection.ConnectionUrl()
-        self.connect.verifyHasConnection()
-        
-        
-        html = self.connect.returnHtmlUrl(url, timeDelay=5)
-        
-        self.extract = extract.ExtractDate()
-        htmlSlpit = self.extract.splitHtml(html)
-
+    def fromLink(self, url, writeCsv=False):
+        html       = self.connect.returnHtmlUrl(url, timeDelay=5)
+        htmlSlpit  = self.extract.splitHtml(html)
         arrayBooks = self.extract.searchHttp(htmlSlpit, nameInLink="amazon")
-        
         df = self.ExtractDateBooks(arrayBooks)
-        
-        # dfw.DataframeWork().showDataFrame(df)
-        dfw.DataframeWork().writeDataFrame(df)
+
+        self.dfwork.showDataFrame(df)
+        if(writeCsv): self.dfwork.writeDataFrame(df)
+
+    def fromCsv(self, path, writeCsv=False):
+        dfRead     = dfwork.readDataFrame("list_of_trading_books.csv")
+        arrayBooks = dfRead["link"]
+        df = self.ExtractDateBooks(arrayBooks)
+
+        self.dfwork.showDataFrame(df)
+        if(writeCsv): self.dfwork.writeDataFrame(df)
+
+    def __init__(self):
+        self.connect = connection.ConnectionUrl()
+        self.extract = extract.ExtractDate()
+        self.dfwork  = dfw.DataframeWork()
+        self.connect.verifyHasConnection()
+

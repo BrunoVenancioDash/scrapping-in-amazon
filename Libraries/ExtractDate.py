@@ -25,6 +25,34 @@ class ExtractDate(object):
                 array.append(line)
         return array
 
+    def is_float(self, element):
+        try:
+            float(element)
+            return True
+        except ValueError:
+            return False
+ 
+    def priceTransformation(self, price):
+        if(len(price)<1): return price
+        priceArray = [ x.replace("$","") for x in price]
+        priceArray = [ float(x) for x in priceArray if self.is_float(x)]
+        return priceArray
+   
+    def rateTransformation(self, rate, percent=False):
+        if (len(rate)<1): return rate
+        transf1 = rate[0].replace("[","")
+        transf1 = transf1.split(" ")
+        rateNew = float(transf1[0]) if self.is_float(transf1[0]) else 0
+        rateNew = rateNew/5.0 if(percent) else rateNew
+        return rateNew
+
+    def voteTransformation(self, nvote):
+        if(len(nvote)<1): return nvote
+        nvoteSplit = nvote[-1].split(" ")
+        nvoteString = nvoteSplit[-3].replace(",","")
+        nvote = int(nvoteString)
+        return nvote
+
     def seachSpanFromTag(self, 
                         soupHtml, 
                         name, 
@@ -35,3 +63,23 @@ class ExtractDate(object):
         lines = [span.get_text() for span in spans]
         
         return lines
+
+    def titleExtract(self, soup):
+        lines = self.seachSpanFromTag(soup, name='span', class_='class',     tag='a-size-extra-large')
+        line  = lines[0] if (len(lines)>0) else lines
+        return line
+
+    def priceExtract(self, soup):
+        lines = self.seachSpanFromTag(soup, name='span', class_='class',     tag='a-size-base a-color-price')
+        line  = self.priceTransformation(lines)
+        return line
+
+    def rateExtract(self, soup):        
+        lines = self.seachSpanFromTag(soup, name='span', class_='data-hook', tag='rating-out-of-text')
+        line  = self.rateTransformation(lines, percent=True)
+        return line
+
+    def voteExtract(self, soup):        
+        lines = self.seachSpanFromTag(soup, name='span', class_='class',     tag='a-size-base a-color-secondary')
+        line  = self.voteTransformation(lines)
+        return line

@@ -5,4 +5,6 @@ import Libraries.SearchHttp as sh
 
 link = "http://bettersystemtrader.com/trading-books/"
 
-sh.SearchHttp(link)
+linkInformation  = sh.SearchHttp()
+
+linkInformation.fromLink(link, writeCsv=True)
