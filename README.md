@@ -1,5 +1,5 @@
 
-# Seacher & <s>Destroy</s> Crowler from Amazon
+# Seacher & <s>Destroy</s> Crawler from Amazon
 =========
 
 This is a script in Python for find link of books in better system trader and get some information about its in amazon, after the crawler whe export to csv for futere analize.
